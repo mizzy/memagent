@@ -2180,8 +2180,17 @@ main(int argc, char **argv)
 				m->port = atoi(p);
 				if (m->port <= 0) m->port = 11211;
 			}
+
+                        struct addrinfo hints, *res;
+                        struct in_addr addr;
+                        memset(&hints, 0, sizeof(hints));
+                        igetaddrinfo(m->ip, NULL, &hints, &res));
+                        addr.s_addr = ((struct sockaddr_in *)(res->ai_addr))->sin_addr.s_addr;
+                        printf("ip address : %s\n", inet_ntoa(addr));
+                        freeaddrinfo(res);
+
 			m->dstaddr.sin_family = AF_INET;
-			m->dstaddr.sin_addr.s_addr = inet_addr(m->ip);
+			m->dstaddr.sin_addr.s_addr = inet_addr(inet_ntoa(addr));
 			m->dstaddr.sin_port = htons(m->port);
 			
 			break;
